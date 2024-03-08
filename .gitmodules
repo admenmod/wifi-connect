@@ -1,0 +1,3 @@
+[submodule "packages/ver/src"]
+	path = packages/ver/src
+	url = https://github.com/admenmod/ver.git

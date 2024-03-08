@@ -1,0 +1,21 @@
+{
+	"private": true,
+	"name": "client",
+	"type": "module",
+	"scripts": {
+		"dev": "vite",
+		"build": "tsc && vite build",
+		"preview": "vite preview"
+	},
+	"dependencies": {
+		"ver": "workspace:",
+		"engine": "workspace:",
+		"shared": "workspace:",
+		"socket.io-client": "^4.7.4",
+		"vite": "^5.1.5",
+		"vite-tsconfig-paths": "^4.3.1"
+	},
+	"devDependencies": {
+		"tsconfig": "workspace:"
+	}
+}

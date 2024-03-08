@@ -1,0 +1,19 @@
+{
+	"private": true,
+	"name": "engine",
+	"type": "module",
+	"exports": {
+		"./*": "./dist/*"
+	},
+	"scripts": {
+		"dev": "npm run build",
+		"build": "rm -r dist/ ; tsc"
+	},
+	"dependencies": {
+		"ver": "workspace:",
+		"box2dweb": "^2.1.0-b"
+	},
+	"devDependencies": {
+		"tsconfig": "workspace:"
+	}
+}

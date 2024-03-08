@@ -1,0 +1,21 @@
+{
+	"private": true,
+	"name": "shared",
+	"type": "module",
+	"exports": {
+		".": "./dist/index.js",
+		"./types/*": {
+			"types": "./types/*"
+		}
+	},
+	"scripts": {
+		"dev": "tsc",
+		"build": "tsc"
+	},
+	"dependencies": {
+		"ver": "workspace:ver"
+	},
+	"devDependencies": {
+		"tsconfig": "workspace:"
+	}
+}

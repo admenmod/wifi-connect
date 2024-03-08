@@ -1,0 +1,5 @@
+{
+	"private": true,
+	"name": "tsconfig",
+	"main": "tsconfig.json"
+}

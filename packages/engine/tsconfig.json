@@ -1,0 +1,11 @@
+{
+	"extends": "tsconfig",
+	"compilerOptions": {
+		"declaration": true,
+		"lib": ["ESNext", "DOM"],
+		"baseUrl": ".",
+		"outDir": "./dist/"
+	},
+	"include": ["src"],
+	"exclude": ["node_modules"]
+}

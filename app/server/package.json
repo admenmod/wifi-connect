@@ -1,0 +1,22 @@
+{
+	"private": true,
+	"name": "server",
+	"type": "module",
+	"scripts": {
+		"dev": "nodemon",
+		"ts-prepare": "ts-patch install -s",
+		"start:dev": "npm run ts-prepare && npm run dev",
+		"start:prod": "node ./dist/main.js",
+		"build": "tsc && tsc-alias"
+	},
+	"dependencies": {
+		"ver": "workspace:",
+		"engine": "workspace:",
+		"shared": "workspace:",
+		"express": "^4.18.2",
+		"socket.io": "^4.7.4"
+	},
+	"devDependencies": {
+		"tsconfig": "workspace:"
+	}
+}
