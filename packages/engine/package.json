@@ -6,7 +6,6 @@
 		"./*": "./dist/*"
 	},
 	"scripts": {
-		"dev": "npm run build",
 		"build": "rm -r dist/ ; tsc"
 	},
 	"dependencies": {

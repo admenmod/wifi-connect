@@ -38,13 +38,14 @@ export interface IDrawMapData {
 	}[];
 }
 
-export interface IResourceData {
+export interface IResourceMetadata {
 	id: string;
 	type: string;
 	name: string;
 	size: number;
 	// ownerID: string;
 }
+
 
 export interface IRegisterResourceData {
 	type?: string;
@@ -70,7 +71,7 @@ type IObject = IMainObject & IExtraObject;
 
 export interface IMap {
 	version: string;
-	resources: IResourceData[];
+	resources: IResourceMetadata[];
 	main_objects: IMainObject[];
 	extra_objects: IExtraObject[];
 }
@@ -92,8 +93,8 @@ export interface ServerToClientEvents {
 	'text:delete': (id: string) => any;
 	'text:create': (data: ITextData) => any;
 
-	'resources:init': (data: IResourceData[]) => any;
-	'resource:new': (data: IResourceData) => any;
+	'resources:init': (data: IResourceMetadata[]) => any;
+	'resource:new': (data: IResourceMetadata) => any;
 
 	'map:init': (data: IMap) => any;
 	'map:create': (editorID: string, data: Partial<IMap>) => any;
@@ -113,9 +114,12 @@ export interface ClientToServerEvents {
 	'resource:register': (
 		ownerID: string,
 		data: IRegisterResourceData,
-		cb: (...args: IArgsCallback<string, IResourceData>) => any) => any;
+		cb: (...args: IArgsCallback<string, IResourceMetadata>) => any) => any;
 
-	'resource:load': (id: string, cb: (data: IResourceData, buffer: ArrayBuffer) => any) => any;
+	'resource:load': (id: string, cb: (data: IResourceMetadata, buffer: ArrayBuffer) => any) => any;
 
 	'map:edit': (editorID: string, data: Partial<IMap>) => any;
+
+
+	'get:list': (cb: (list: IResourceMetadata[]) => any) => any;
 }

@@ -1,6 +1,7 @@
 import os from 'node:os';
 import { defineConfig } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
+import preact from '@preact/preset-vite'
 
 
 const port = 3000;
@@ -22,7 +23,7 @@ const host = (() => {
 const prefix = `src/workers`;
 
 export default defineConfig({
-	plugins: [tsconfigPaths()],
+	plugins: [tsconfigPaths(), preact()],
 	server: { host, port }
 	// build: {
 	// 	rollupOptions: {

@@ -7,7 +7,7 @@
 		"ts-prepare": "ts-patch install -s",
 		"start:dev": "npm run ts-prepare && npm run dev",
 		"start:prod": "node ./dist/main.js",
-		"build": "tsc && tsc-alias"
+		"build": "rm -r ./dist/* ; tsc && tsc-alias"
 	},
 	"dependencies": {
 		"ver": "workspace:",

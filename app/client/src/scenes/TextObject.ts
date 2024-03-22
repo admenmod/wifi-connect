@@ -6,6 +6,8 @@ import { Container } from 'engine/modules/Container.js';
 import { Node2D } from 'engine/scenes/Node2D.js';
 import type { ITextData } from 'shared/types/transfer.js';
 
+import { socket } from 'src/socket.js';
+
 
 type IData = ITextData;
 
@@ -87,6 +89,21 @@ export class TextObjectContainer extends Node2D {
 		this['@server#create'].on(data => this.c.create(data));
 		this['@server#delete'].on(id => this.c.delete(id));
 		this['@server#update'].on(collection => this.update(collection));
+	}
+
+
+	protected async _init(this: TextObjectContainer): Promise<void> {
+		await super._init();
+
+		socket.on('text:create', (...args) => this.emit('server#create', ...args));
+		socket.on('text:delete', (...args) => this.emit('server#delete', ...args));
+	}
+
+
+	public async setup_socket(this: TextObjectContainer, socket: socket) {
+		return new Promise<void>(res => socket.on('texts:init', async (...args) => {
+			res(await this.await_emit('server#init', ...args));
+		}));
 	}
 
 

@@ -9,8 +9,8 @@
 		}
 	},
 	"scripts": {
-		"dev": "tsc",
-		"build": "tsc"
+		"dev": "nodemon",
+		"build": "rm -r ./dist/* ; tsc"
 	},
 	"dependencies": {
 		"ver": "workspace:ver"

@@ -8,13 +8,21 @@ import type { Touch, TouchesController } from 'ver/TouchesController';
 import { Node2D } from './Node2D.js';
 
 
-export class ControllersSystem extends System<typeof Control> {
-	public '@input:press' = new Event<ControllersSystem, [pos: Vector2, local: Vector2, touch: Touch, viewport: Viewport]>(this);
-	public '@input:up'    = new Event<ControllersSystem, [pos: Vector2, local: Vector2, touch: Touch, viewport: Viewport]>(this);
-	public '@input:move'  = new Event<ControllersSystem, [pos: Vector2, local: Vector2, touch: Touch, viewport: Viewport]>(this);
+export interface IInputEvent {
+	pos: Vector2;
+	local: Vector2;
+	touch: Touch;
+	viewport: Viewport;
+}
 
-	public '@input:click'    = new Event<ControllersSystem, [count: number, pos: Vector2, local: Vector2, touch: Touch, viewport: Viewport]>(this);
-	public '@input:dblclick' = new Event<ControllersSystem, [pos: Vector2, local: Vector2, touch: Touch, viewport: Viewport]>(this);
+
+export class ControllersSystem extends System<typeof Control> {
+	public '@input:press' = new Event<ControllersSystem, [e: IInputEvent]>(this);
+	public '@input:up'    = new Event<ControllersSystem, [e: IInputEvent]>(this);
+	public '@input:move'  = new Event<ControllersSystem, [e: IInputEvent]>(this);
+
+	public '@input:click'    = new Event<ControllersSystem, [e: IInputEvent]>(this);
+	public '@input:dblclick' = new Event<ControllersSystem, [e: IInputEvent]>(this);
 
 
 	protected _sort(a: Control, b: Control): number { return a.globalzIndex - b.globalzIndex; }
@@ -32,54 +40,69 @@ export class ControllersSystem extends System<typeof Control> {
 
 
 		const fn_touchstart = touches['@touchstart'].on(touch => {
-			const pos = viewport.transformFromScreenToViewport(touch.pos.buf());
+			const tpos = viewport.transformFromScreenToViewport(touch.pos.buf());
 			const local = viewport.transformToLocal(touch.pos.buf());
 
-			this['@input:press'].emit(pos, local, touch, viewport);
+			this['@input:press'].emit({ pos: tpos, local, touch, viewport });
 
-			for(let i = 0; i < this._items.length; i++) {
-				this._items[i]['@input:press'].emit(pos, local, touch, viewport);
+			for(const item of this._items) {
+				const position = item.globalPosition;
+				const pos = tpos.buf().sub(position).rotate(-item.globalRotation).add(position);
+
+				item.emit('input:press', { pos, local, touch, viewport });
 			}
 		});
 		const fn_touchend = touches['@touchend'].on(touch => {
-			const pos = viewport.transformFromScreenToViewport(touch.pos.buf());
+			const tpos = viewport.transformFromScreenToViewport(touch.pos.buf());
 			const local = viewport.transformToLocal(touch.pos.buf());
 
-			this['@input:up'].emit(pos, local, touch, viewport);
+			this['@input:up'].emit({ pos: tpos, local, touch, viewport });
 
-			for(let i = 0; i < this._items.length; i++) {
-				this._items[i]['@input:up'].emit(pos, local, touch, viewport);
+			for(const item of this._items) {
+				const position = item.globalPosition;
+				const pos = tpos.buf().sub(position).rotate(-item.globalRotation).add(position);
+
+				item.emit('input:up', { pos, local, touch, viewport });
 			}
 		});
 		const fn_touchmove = touches['@touchmove'].on(touch => {
-			const pos = viewport.transformFromScreenToViewport(touch.pos.buf());
+			const tpos = viewport.transformFromScreenToViewport(touch.pos.buf());
 			const local = viewport.transformToLocal(touch.pos.buf());
 
-			this['@input:move'].emit(pos, local, touch, viewport);
+			this['@input:move'].emit({ pos: tpos, local, touch, viewport });
 
-			for(let i = 0; i < this._items.length; i++) {
-				this._items[i]['@input:move'].emit(pos, local, touch, viewport);
+			for(const item of this._items) {
+				const position = item.globalPosition;
+				const pos = tpos.buf().sub(position).rotate(-item.globalRotation).add(position);
+
+				item.emit('input:move', { pos, local, touch, viewport });
 			}
 		});
 
-		const fn_touchclick = touches['@touchclick'].on((count, touch) => {
-			const pos = viewport.transformFromScreenToViewport(touch.pos.buf());
+		const fn_touchclick = touches['@touchclick'].on(touch => {
+			const tpos = viewport.transformFromScreenToViewport(touch.pos.buf());
 			const local = viewport.transformToLocal(touch.pos.buf());
 
-			this['@input:click'].emit(count, pos, local, touch, viewport);
+			this['@input:click'].emit({ pos: tpos, local, touch, viewport });
 
-			for(let i = 0; i < this._items.length; i++) {
-				this._items[i]['@input:click'].emit(count, pos, local, touch, viewport);
+			for(const item of this._items) {
+				const position = item.globalPosition;
+				const pos = tpos.buf().sub(position).rotate(-item.globalRotation).add(position);
+
+				item.emit('input:click', { pos, local, touch, viewport });
 			}
 		});
 		const fn_touchdblclick = touches['@touchdblclick'].on(touch => {
-			const pos = viewport.transformFromScreenToViewport(touch.pos.buf());
+			const tpos = viewport.transformFromScreenToViewport(touch.pos.buf());
 			const local = viewport.transformToLocal(touch.pos.buf());
 
-			this['@input:dblclick'].emit(pos, local, touch, viewport);
+			this['@input:dblclick'].emit({ pos: tpos, local, touch, viewport });
 
-			for(let i = 0; i < this._items.length; i++) {
-				this._items[i]['@input:dblclick'].emit(pos, local, touch, viewport);
+			for(const item of this._items) {
+				const position = item.globalPosition;
+				const pos = tpos.buf().sub(position).rotate(-item.globalRotation).add(position);
+
+				item.emit('input:dblclick', { pos, local, touch, viewport });
 			}
 		});
 
@@ -93,9 +116,9 @@ export class ControllersSystem extends System<typeof Control> {
 		});
 	}
 
-	public update(touches: TouchesController, viewport: Viewport, dt: number) {
+	public update(dt: number) {
 		for(let i = 0; i < this._items.length; i++) {
-			this._items[i].input(touches, viewport, dt);
+			this._items[i].input(this.touches, this.viewport, dt);
 		}
 	}
 }
@@ -104,12 +127,12 @@ export class ControllersSystem extends System<typeof Control> {
 const PARENT_CACHE = Symbol('PARENT_CACHE');
 
 export class Control extends Node2D {
-	public '@input:press' = new Event<Control, [pos: Vector2, local: Vector2, touch: Touch, viewport: Viewport]>(this);
-	public '@input:up'    = new Event<Control, [pos: Vector2, local: Vector2, touch: Touch, viewport: Viewport]>(this);
-	public '@input:move'  = new Event<Control, [pos: Vector2, local: Vector2, touch: Touch, viewport: Viewport]>(this);
+	public '@input:press' = new Event<Control, [e: IInputEvent]>(this);
+	public '@input:up'    = new Event<Control, [e: IInputEvent]>(this);
+	public '@input:move'  = new Event<Control, [e: IInputEvent]>(this);
 
-	public '@input:click'    = new Event<Control, [count: number, pos: Vector2, local: Vector2, touch: Touch, viewport: Viewport]>(this);
-	public '@input:dblclick' = new Event<Control, [pos: Vector2, local: Vector2, touch: Touch, viewport: Viewport]>(this);
+	public '@input:click'    = new Event<Control, [e: IInputEvent]>(this);
+	public '@input:dblclick' = new Event<Control, [e: IInputEvent]>(this);
 
 
 	protected [PARENT_CACHE]: Control[] = [];

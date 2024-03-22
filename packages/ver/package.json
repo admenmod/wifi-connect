@@ -3,8 +3,7 @@
 	"name": "ver",
 	"type": "module",
 	"scripts": {
-		"dev": "tsc",
-		"build": "tsc"
+		"build": "rm -r ./dist/ ; tsc"
 	},
 	"exports": {
 		"./*": "./dist/*.js"

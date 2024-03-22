@@ -1,0 +1,88 @@
+@font-face {
+	font-family: arkhip;
+	src: url(./assets/fonts/arkhip_font.ttf);
+}
+
+:root {
+	--main-color-bg: #222222;
+	--main-height: 100dvh;
+}
+
+* {
+	padding: 0;
+	margin: 0;
+	tab-size: 4;
+	box-sizing: border-box;
+}
+
+body {
+	color: #eeeeee;
+	background: #222222;
+}
+
+#app {
+	display: grid;
+	align-items: center;
+	justify-items: center;
+	width: 100vw;
+	height: 100dvh;
+
+	&:fullscreen > * {
+		height: calc(100dvh - env(keyboard-inset-height, 0px));
+	}
+}
+
+div.preact-root {
+	display: grid;
+	align-items: center;
+	justify-items: center;
+	width: 100%;
+	height: 100dvh;
+	overflow: auto;
+	align-self: start;
+	justify-self: center;
+	grid-area: 1/1/1/1;
+}
+
+canvas.canvas {
+	align-self: start;
+	justify-self: center;
+	grid-area: 1/1/1/1;
+	width: 100%;
+	height: 100dvh;
+	background: #333333;
+}
+
+div.wrapper {
+	display: grid;
+	align-items: center;
+	justify-items: center;
+	gap: 5px;
+	margin: 10px 15px;
+	padding: 10px 15px;
+	width: min-content;
+	align-self: center;
+	justify-self: center;
+}
+
+input.username {
+	width: max-content;
+	height: max-content;
+	align-self: center;
+	justify-self: center;
+}
+
+input.address {
+	width: max-content;
+	height: max-content;
+	align-self: center;
+	justify-self: center;
+}
+
+button.connect {
+	padding: 10px 20px;
+	width: max-content;
+	height: max-content;
+	align-self: center;
+	justify-self: center;
+}

@@ -14,11 +14,8 @@ import { Node } from 'engine/scenes/Node.js';
 import { Player, PlayerContainer } from './Player.js';
 import { TextObjectContainer } from '../scenes/TextObject.js';
 
-import type { IMap, IResourceData, IMainObject, IExtraObject } from 'shared/types/mapeditor.js';
+import type { IMap, IResourceMetadata, IMainObject, IExtraObject } from 'shared/types/mapeditor.js';
 import { io } from '../main.js';
-
-
-const data_packer = new DataPacker();
 
 
 const ROOT_PATH_RESOURCES = `assets/img/`;
@@ -31,13 +28,13 @@ const path_map = (name: string) => `${ROOT_PATH_MAPS}${name}.json`;
 
 
 const resources = await (async (metadata_dir) => {
-	const resources: IResourceData[] = [];
+	const resources: IResourceMetadata[] = [];
 	const paths = fs.readdirSync(metadata_dir);
-	const proms: Promise<IResourceData>[] = [];
+	const proms: Promise<IResourceMetadata>[] = [];
 
 	for(const path of paths) {
 		fs_promises.readFile(`${metadata_dir}${path}`, { encoding: 'utf8' })
-		.then(json => JSON.parse(json) as IResourceData)
+		.then(json => JSON.parse(json) as IResourceMetadata)
 		.then(data => resources.push(data));
 	}
 
@@ -78,9 +75,11 @@ export class MainScene extends Node {
 		io.on('connection', async socket => {
 			socket.on('disconnecting', reason => this.$playersC.c.delete(socket.id!));
 
+			socket.on('get:list', cb => cb(resources));
+
 
 			const player = await new Promise<Player>(res => socket.on('natify:init', async (data) => {
-				const { id, username, color, position, size, scale, rotation } = data; //data_packer.unpack(data as any) as any;
+				const { id, username, color, position, size, scale, rotation } = data;
 
 				res(await this.$playersC.create({
 					id: socket.id!,
@@ -91,7 +90,6 @@ export class MainScene extends Node {
 
 			socket.emit('players:init', this.$playersC.getSocketData());
 			socket.emit('texts:init', this.$textsC.getSocketData());
-
 			socket.emit('map:init', map);
 
 
@@ -154,7 +152,7 @@ export class MainScene extends Node {
 					if(fs.existsSync(file_path)) {
 						cb('file exists', null);
 					} else {
-						const json: IResourceData = { id, name, type: data.type || file.type, size: file.size };
+						const json: IResourceMetadata = { id, name, type: data.type || file.type, size: file.size };
 						await fs_promises.writeFile(metadata_path, JSON.stringify(json));
 						await fs_promises.writeFile(file_path, new Uint8Array(buffer));
 

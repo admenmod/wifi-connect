@@ -7,6 +7,7 @@ import { Container } from 'engine/modules/Container.js';
 import { Node2D } from 'engine/scenes/Node2D.js';
 
 import type { IPlayerData } from 'shared/types/mapeditor.js';
+import { socket } from 'src/socket.js';
 
 
 type IData = IPlayerData;
@@ -22,6 +23,7 @@ export class Player extends Node2D implements IData {
 	private _username_image!: HTMLImageElement | null;
 
 	protected _draw({ ctx, scale }: Viewport): void {
+		const pos = this.globalPosition;
 		scale = scale.buf().div(this.globalScale);
 
 		const size = this.size;
@@ -102,6 +104,7 @@ export class PlayerContainer extends Node2D {
 
 		this.c.on('deleteing', item => item.visible = false);
 
+
 		this['@server#init'].on(async collection => {
 			const arr = [];
 			for(const data of collection) arr.push(this.c.create(data));
@@ -111,6 +114,23 @@ export class PlayerContainer extends Node2D {
 		this['@server#delete'].on(id => this.c.delete(id));
 		this['@server#update'].on(collection => this.update(collection));
 	}
+
+
+	protected async _init(this: PlayerContainer): Promise<void> {
+		await super._init();
+
+		socket.on('player:create', (...args) => this.emit('server#create', ...args));
+		socket.on('player:delete', (...args) => this.emit('server#delete', ...args));
+		socket.on('players:update', (...args) => this.emit('server#update', ...args));
+	}
+
+
+	public async setup_socket(this: PlayerContainer, socket: socket) {
+		return new Promise<void>(res => socket.on('players:init', async (...args) => {
+			res(await this.await_emit('server#init', ...args));
+		}));
+	}
+
 
 	public update(collection: IData[]) {
 		for(const data of collection) {

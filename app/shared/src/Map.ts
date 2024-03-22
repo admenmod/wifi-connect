@@ -1,5 +1,5 @@
-import { Vector2 } from '@ver/Vector2.js';
-import { math as Math } from '@ver/helpers.js';
+import { Vector2 } from 'ver/Vector2';
+import { math as Math } from 'ver/helpers';
 
 
 const GObject = globalThis.Object;
@@ -266,8 +266,6 @@ export class ObjectGroup extends BaseLayer implements IObjectGroup {
 }
 
 export class Tileset implements ITileset {
-	public imagedata!: HTMLImageElement;
-
 	public name: string;
 
 	public image: string;

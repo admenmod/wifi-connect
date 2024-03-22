@@ -29,12 +29,8 @@ export class Joystick extends Control {
 
 
 	protected async _init(this: Joystick): Promise<void> {
-		this.on('input:press', (tpos, _, touch) => {
+		this.on('input:press', ({ pos: tpos, touch }) => {
 			const pos = this.globalPosition;
-			const rot = this.globalRotation;
-
-			tpos = tpos.buf().sub(pos).rotate(-rot).add(pos);
-
 			const l = pos.getDistance(tpos) / this.globalScale.x;
 
 			if(!this.touch && l < this.radius0) this.touch = touch;
@@ -47,18 +43,14 @@ export class Joystick extends Control {
 			}
 		});
 
-		this.on('input:up', (_, __, touch) => {
+		this.on('input:up', ({ touch }) => {
 			if(this.touch === touch) this.touch = null;
 		});
 
-		this.on('input:move', (tpos, _, touch) => {
+		this.on('input:move', ({ pos: tpos, touch }) => {
 			if(this.touch !== touch) return;
 
 			const pos = this.globalPosition;
-			const rot = this.globalRotation;
-
-			tpos = tpos.buf().sub(pos).rotate(-rot).add(pos);
-
 			const l = pos.getDistance(tpos) / this.globalScale.x;
 
 			this.core_offset.set(new Vector2().moveAngle(

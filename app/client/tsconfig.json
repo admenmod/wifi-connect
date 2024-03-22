@@ -2,6 +2,8 @@
 	"extends": "tsconfig",
 	"compilerOptions": {
 		"noEmit": true,
+		"jsx": "react-jsx",
+		"jsxImportSource": "preact",
 		"lib": ["ESNext", "DOM"],
 		"baseUrl": ".",
 		"outDir": "./dist/"

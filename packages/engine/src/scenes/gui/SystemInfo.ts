@@ -36,13 +36,21 @@ export class SystemInfo extends Node2D {
 		this.time += dt;
 	}
 
-	protected _draw(viewport: Viewport): void {
-		const ctx = viewport.ctx;
-
+	protected _draw({ ctx, size, position }: Viewport): void {
 		ctx.resetTransform();
 
+		const pad = new Vector2(5, 5);
+		const fontSize = 15;
 		ctx.beginPath();
+		ctx.textAlign = 'right';
+		ctx.textBaseline = 'top';
+		ctx.font = `${fontSize}px monospace`;
+		ctx.fillStyle = '#ffffff';
+		ctx.fillText(`${position.x.toFixed(0)}`, size.x - pad.x, pad.y);
+		ctx.fillText(`${position.y.toFixed(0)}`, size.x - pad.x, pad.y + fontSize);
 
+		ctx.beginPath();
+		ctx.textAlign = 'left';
 		ctx.textBaseline = 'top';
 		ctx.font = `15px arkhip, Arial`;
 
@@ -68,20 +76,13 @@ export class SystemInfo extends Node2D {
 
 		ctx.textAlign = 'end';
 		ctx.textBaseline = 'bottom';
-
 		ctx.strokeStyle = '#111111';
-		ctx.strokeText(
-			`Screen size: ${viewport.size.x.toFixed(0)}, ${viewport.size.y.toFixed(0)}`,
-			viewport.size.x - 10, viewport.size.y - 10
-		);
+		ctx.strokeText(`Screen size: ${size.x.toFixed(0)}, ${size.y.toFixed(0)}`, size.x-10, size.y-10);
 
 		ctx.fillStyle = '#eeeeee';
-		ctx.fillText(
-			`Screen size: ${viewport.size.x.toFixed(0)}, ${viewport.size.y.toFixed(0)}`,
-			viewport.size.x - 10, viewport.size.y - 10
-		);
+		ctx.fillText(`Screen size: ${size.x.toFixed(0)}, ${size.y.toFixed(0)}`, size.x-10, size.y-10);
 
-		const center = Vector2.ZERO.buf().set(viewport.size).div(2);
+		const center = Vector2.ZERO.buf().set(size).div(2);
 		const a = 5;
 
 		ctx.beginPath();

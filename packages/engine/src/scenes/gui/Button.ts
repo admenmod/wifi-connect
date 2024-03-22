@@ -5,6 +5,7 @@ import { Control } from '../Control.js';
 
 
 export class Button extends Control {
+	public '@click' = new Event<Button, []>(this);
 	public '@pressed' = new Event<Button, []>(this);
 
 
@@ -20,22 +21,27 @@ export class Button extends Control {
 	protected async _init(this: Button): Promise<void> {
 		await super._init();
 
-		this.on('input:press', tpos => {
-			const pos = this.globalPosition;
-			const rot = this.globalRotation;
+		this.on('input:click', ({ pos, touch }) => {
+			if(touch.clickCount !== 1) return;
+
+			const position = this.globalPosition;
 			const size = this.globalScale.inc(this.size);
 
-			tpos = tpos.buf().sub(pos).rotate(-rot).add(pos);
+			if(
+				pos.x < position.x + size.x/2 && pos.x > position.x - size.x/2 &&
+				pos.y < position.y + size.y/2 && pos.y > position.y - size.y/2
+			) this['@click'].emit();
+		});
+
+		this.on('input:press', ({ pos }) => {
+			const position = this.globalPosition;
+			const size = this.globalScale.inc(this.size);
 
 			if(
-				tpos.x < pos.x + size.x/2 && tpos.x > pos.x - size.x/2 &&
-				tpos.y < pos.y + size.y/2 && tpos.y > pos.y - size.y/2
+				pos.x < position.x + size.x/2 && pos.x > position.x - size.x/2 &&
+				pos.y < position.y + size.y/2 && pos.y > position.y - size.y/2
 			) this['@pressed'].emit();
 		});
-	}
-
-	protected _process(dt: number): void {
-		;
 	}
 
 	protected _draw({ ctx }: Viewport): void {
